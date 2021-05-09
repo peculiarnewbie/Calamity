@@ -4,6 +4,9 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
+LeanTween/
+Fantasy*Adventure*Environment/
+VR*Pemeliharaan/
 
 # Visual Studio cache directory
 .vs/
