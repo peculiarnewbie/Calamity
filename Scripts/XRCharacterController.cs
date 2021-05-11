@@ -6,6 +6,7 @@ using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.AI;
 
 public class XRCharacterController : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class XRCharacterController : MonoBehaviour
     private Vector3 currentDirection = Vector3.zero;
     private bool isGrounded;
     private bool jumpTrigger = false;
+    private bool isFocusing = false;
     private bool canDoubleJump = true;
     private Vector3 verticalVelocity;
     private bool resetTrigger = false;
@@ -74,6 +76,7 @@ public class XRCharacterController : MonoBehaviour
         playerActions.Land.Jump.started += ctx => jumpTrigger = true;
         playerActions.Land.Reset.started += ctx => resetTrigger = true;
         playerActions.Land.Switch.started += ctx => switchTrigger = true;
+        playerActions.Land.Focus.started += ctx => isFocusing = !isFocusing;
     }
 
     private void OnDisable()
@@ -93,7 +96,6 @@ public class XRCharacterController : MonoBehaviour
         AnimateCharacter();
 
         CheckForInteractions();
-
     }
 
     private void FixedUpdate()
@@ -140,8 +142,9 @@ public class XRCharacterController : MonoBehaviour
                 OnSnapTurn?.Invoke(false);
                 isSnapTurning = true;
             }
+            Debug.Log(rotateInput);
         }
-        else if(rotateInput > -0.3 && rotateInput > 0.3)
+        else if(rotateInput > -0.3 && rotateInput < 0.3)
         {
             isSnapTurning = false;
         }
@@ -202,7 +205,7 @@ public class XRCharacterController : MonoBehaviour
             jumpTrigger = false;
             if (isGrounded)
             {
-                Debug.Log(canDoubleJump);
+                //Debug.Log(canDoubleJump);
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * -gravity);
                 animator.SetBool("Jump", true);
             }
@@ -211,7 +214,7 @@ public class XRCharacterController : MonoBehaviour
             {
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * doubleJumpMultiplier * -gravity);
                 canDoubleJump = false;
-                Debug.Log(canDoubleJump);
+                //Debug.Log(canDoubleJump);
             }
         }
 
@@ -248,7 +251,8 @@ public class XRCharacterController : MonoBehaviour
             focus = newFocus;
         }
 
-        OnFocus?.Invoke(focus.gameObject);
+        if(isFocusing)
+            OnFocus?.Invoke(focus.gameObject);
 
     }
 }

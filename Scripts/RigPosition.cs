@@ -11,6 +11,7 @@ public class RigPosition : MonoBehaviour
     public float snapTurnDegree = 30.0f;
     float platformerSmooth = 0.05f;
     float battleSmooth = 0.3f;
+    float focusDamping = 0.8f;
     bool cameraTurnActive = true;
 
     public Vector3 platformer_Offset;
@@ -89,6 +90,10 @@ public class RigPosition : MonoBehaviour
 
     public void FocusOnEnemy(GameObject Enemy)
     {
+        Vector3 lookPos = Enemy.transform.position - transform.position;
+        lookPos.y = transform.position.y;
+        Quaternion rotation = Quaternion.LookRotation(lookPos);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * focusDamping);
         transform.LookAt(Enemy.transform, Vector3.up);
     }
 }
