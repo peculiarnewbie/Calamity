@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerStats : CharacterStats
 {
+    public int hazardDamage = 2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +16,13 @@ public class PlayerStats : CharacterStats
     void Update()
     {
         
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Hazard"))
+            TakeDamage(hazardDamage);
+        Debug.Log(currentHealth);
+
     }
 }
