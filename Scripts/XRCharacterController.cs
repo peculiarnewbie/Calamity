@@ -13,7 +13,11 @@ public class XRCharacterController : MonoBehaviour
     
     public event Action<bool> OnSnapTurn; //true is left, false is right
 
-    public event Action<GameObject> OnFocus;
+    public event Action<GameObject, bool> OnFocus;
+
+    public AnimatorHandler animatorHandler;
+
+    [Space(10)]
 
     // Input values
     [SerializeField] private float playerSpeed = 5.0f;
@@ -21,9 +25,9 @@ public class XRCharacterController : MonoBehaviour
     [SerializeField] private float jumpHeight = 2.0f;
     [SerializeField] private float doubleJumpMultiplier = 0.7f;
     [SerializeField] private float fallMultiplier = 1.5f;
-
     [SerializeField] private GameObject testEnemy;
 
+    [Space(10)]
 
     // Values
     private Vector3 currentDirection = Vector3.zero;
@@ -49,8 +53,9 @@ public class XRCharacterController : MonoBehaviour
 
     public Interactable focus;
 
+    [Space(10)]
+
     // Components
-    private Animator animator = null;
     private CharacterController character = null;
 
     //Events
@@ -65,9 +70,10 @@ public class XRCharacterController : MonoBehaviour
         current = this;
         // Collect components
         playerActions = new PlayerActions();
-        animator = GetComponentInChildren<Animator>();
         character = GetComponent<CharacterController>();
         modeChange = GetComponent<ModeChange>();
+        animatorHandler = GetComponent<AnimatorHandler>();
+        animatorHandler.Initialize();
     }
 
     private void OnEnable()
@@ -157,11 +163,13 @@ public class XRCharacterController : MonoBehaviour
 
         if (currentDirection.magnitude > 0.1f)
         {
-            animator.SetBool("Walking", true);
+            //animator.SetBool("Walking", true);
+            animatorHandler.PlayTargetAnimation("Walking", true);
         }
         else
         {
-            animator.SetBool("Walking", false);
+            //animator.SetBool("Walking", false);
+            animatorHandler.PlayTargetAnimation("Walking", false);
         }
         if (resetTrigger)
         {
@@ -191,7 +199,8 @@ public class XRCharacterController : MonoBehaviour
         {
             verticalVelocity.y = -0.1f;
             canDoubleJump = true;
-            animator.SetBool("Jump", false);
+            //animator.SetBool("Jump", false);
+            animatorHandler.PlayTargetAnimation("Jump", false);
         }
         
 
@@ -207,7 +216,8 @@ public class XRCharacterController : MonoBehaviour
             {
                 //Debug.Log(canDoubleJump);
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * -gravity);
-                animator.SetBool("Jump", true);
+                //animator.SetBool("Jump", true);
+                animatorHandler.PlayTargetAnimation("Jump", true);
             }
                 
             else if (canDoubleJump)
@@ -248,11 +258,16 @@ public class XRCharacterController : MonoBehaviour
 
         if(newFocus != null)
         {
+            if(newFocus != focus)
+            {
+                focus.OnDefocused();
+                focus = newFocus;
+            }
             focus = newFocus;
         }
 
         if(isFocusing)
-            OnFocus?.Invoke(focus.gameObject);
+            OnFocus?.Invoke(focus.gameObject, true);
 
     }
 }

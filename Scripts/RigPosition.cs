@@ -11,7 +11,7 @@ public class RigPosition : MonoBehaviour
     public float snapTurnDegree = 30.0f;
     float platformerSmooth = 0.05f;
     float battleSmooth = 0.3f;
-    float focusDamping = 0.8f;
+    float focusDamping = 0.95f;
     bool cameraTurnActive = true;
 
     public Vector3 platformer_Offset;
@@ -21,12 +21,66 @@ public class RigPosition : MonoBehaviour
 
     IEnumerator coroutine;
 
+    public LayerMask ignoreLayers;
+
+    public static RigPosition singleton;
+
+    public float lookSpeed = 0.1f;
+    public float followSpeed = 0.1f;
+    public float pivotSpeed = 0.03f;
+
+    private Vector3 cameraTransformPosition;
+    private float targetPosition;
+    private float defaultPosition;
+    private float lookAngle;
+    private float pivotAngle;
+    public float minimumPivot = -35;
+    public float maximumPivot = 35;
+
+    public float cameraSphereRadius = 0.2f;
+    public float cameraCollisionOffset = 0.2f;
+    public float minimumCollisionOffset = 0.2f;
+
+    private void Awake()
+    {
+        singleton = this;
+        ignoreLayers = ~(1 << 8 | 1 << 9 | 1 << 10);
+        defaultPosition = transform.localPosition.z;
+    }
+
     private void Start()
     {
         XRCharacterController.current.OnFocus += FocusOnEnemy;
-        XRCharacterController.current.OnSnapTurn += SnapTurn;
 
         SwitchCameraMode(0);
+    }
+
+    public void FollowTarget(float delta)
+    {
+        Vector3 targetPosition = Vector3.Lerp(transform.position, target.position, smoothSpeed * delta);
+        transform.position = targetPosition;
+    }
+
+    public void HandleCameraCollisions(float delta)
+    {
+        targetPosition = defaultPosition;
+        RaycastHit hit;
+
+        if(Physics.SphereCast
+            (transform.position, cameraSphereRadius, transform.forward, out hit, Mathf.Abs(targetPosition), ignoreLayers))
+        {
+            float dis = Vector3.Distance(transform.position, hit.point);
+            targetPosition = -(dis - cameraCollisionOffset);
+            Debug.Log("camera collided");
+        }
+
+        if(Mathf.Abs(targetPosition) < minimumCollisionOffset)
+        {
+            targetPosition = -minimumCollisionOffset;
+        }
+
+        cameraTransformPosition.z = Mathf.Lerp(transform.localPosition.z, targetPosition, delta / 0.2f) + 1;
+        transform.localPosition = cameraTransformPosition;
     }
 
     private void FixedUpdate()
@@ -34,13 +88,20 @@ public class RigPosition : MonoBehaviour
         Vector3 desiredPosition = target.position;
         float range = (desiredPosition - transform.position).magnitude;
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed*range);
-        transform.position = smoothedPosition;
         transform.LookAt(cameraPos, Vector3.up);
         
         if (cameraTurnActive)
         {
-            transform.position = smoothedPosition - transform.forward * 5f;
+            transform.localPosition =  offset;
         }
+        else
+        {
+            transform.localPosition = offset;
+        }
+
+        float delta = Time.fixedDeltaTime;
+
+        //HandleCameraCollisions(delta);
     }
 
     public void SwitchCameraMode(int mode)
@@ -80,20 +141,21 @@ public class RigPosition : MonoBehaviour
         yield return null;
     }
 
-    public void SnapTurn(bool toLeft)
+    public void FocusOnEnemy(GameObject focus, bool isEnemy)
     {
-        if(toLeft)
-            transform.Rotate(0.0f, snapTurnDegree, 0.0f);
-        else
-            transform.Rotate(0.0f, -snapTurnDegree, 0.0f);
+        if (!isEnemy)
+            return;
+
+        Vector3 lookPos = focus.transform.position - transform.position;
+        Quaternion rotation = Quaternion.LookRotation(lookPos, new Vector3(0,1,0));
+        transform.rotation = rotation;
+        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * focusDamping);
+        //transform.LookAt(focus.transform, Vector3.up);
     }
 
-    public void FocusOnEnemy(GameObject Enemy)
+    private void OnDrawGizmosSelected()
     {
-        Vector3 lookPos = Enemy.transform.position - transform.position;
-        lookPos.y = transform.position.y;
-        Quaternion rotation = Quaternion.LookRotation(lookPos);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * focusDamping);
-        transform.LookAt(Enemy.transform, Vector3.up);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, cameraSphereRadius);
     }
 }

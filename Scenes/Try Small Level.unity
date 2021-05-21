@@ -527,6 +527,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: monster (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3ad3c8998cf48fc499bc3d2b160b5cfb,
+        type: 3}
+      propertyPath: m_TagString
+      value: Hazard
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ad3c8998cf48fc499bc3d2b160b5cfb, type: 3}
 --- !u!1001 &207588581
@@ -1621,9 +1626,10 @@ GameObject:
   - component: {fileID: 986621709}
   - component: {fileID: 986621711}
   - component: {fileID: 986621712}
-  - component: {fileID: 986621713}
   - component: {fileID: 986621714}
-  m_Layer: 0
+  - component: {fileID: 986621713}
+  - component: {fileID: 986621715}
+  m_Layer: 10
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1675,6 +1681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0824a947617001242beea9c14c26094d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animatorHandler: {fileID: 986621715}
   playerSpeed: 5
   gravity: -9.81
   jumpHeight: 2
@@ -1706,28 +1713,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigPosition: {fileID: 1894703866}
---- !u!195 &986621713
-NavMeshAgent:
+--- !u!114 &986621713
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986621708}
   m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3
-  m_Acceleration: 20
-  avoidancePriority: 50
-  m_AngularSpeed: 1200
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e175d70875d0dd43b304028cc472513, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  currentHealth: 0
+  damage:
+    baseValue: 5
+  armor:
+    baseValue: 0
+  ableToMove: 1
+  animatorHandler: {fileID: 0}
+  hazardDamage: 2
 --- !u!114 &986621714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1740,6 +1746,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 851dbf7784b018545bc4c88a2686047e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &986621715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986621708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 384d63e424ffb9842a77b8f5ad0b8ef6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 1645925648}
 --- !u!1 &1110893284
 GameObject:
   m_ObjectHideFlags: 0
@@ -2076,6 +2095,54 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2922a2d1b610a994998fd8d53e218b93, type: 3}
+--- !u!1 &1164216942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1164216943}
+  - component: {fileID: 1164216944}
+  m_Layer: 10
+  m_Name: Camera Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1164216943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164216942}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1894703864}
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1164216944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164216942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbc65a3f1255694e8b3a4965fc1102d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTransform: {fileID: 986621710}
+  snapTurnDegree: 30
+  smoothSpeed: 0.05
+  flexLevel: 3
 --- !u!1 &1183124520
 GameObject:
   m_ObjectHideFlags: 0
@@ -2299,6 +2366,25 @@ Transform:
   m_Father: {fileID: 1894703864}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1225666018 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3ad3c8998cf48fc499bc3d2b160b5cfb,
+    type: 3}
+  m_PrefabInstance: {fileID: 189418700}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1225666019
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225666018}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.51546, y: 4.443353, z: 2.1925101}
+  m_Center: {x: -0.00062340504, y: 2.2195394, z: -0.028905038}
 --- !u!1 &1251263358
 GameObject:
   m_ObjectHideFlags: 0
@@ -5725,7 +5811,7 @@ GameObject:
   - component: {fileID: 1894703862}
   - component: {fileID: 1894703865}
   - component: {fileID: 1894703866}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: XR Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5771,13 +5857,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1894703861}
-  m_LocalRotation: {x: 0, y: 0, z: -0, w: -1}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: -1}
   m_LocalPosition: {x: 0, y: 2.58, z: -5.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1224496887}
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 1164216943}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 360, z: 0}
 --- !u!114 &1894703865
 MonoBehaviour:
@@ -5812,6 +5898,17 @@ MonoBehaviour:
   snapTurnDegree: 15
   platformer_Offset: {x: 0, y: 3, z: -7}
   battle_Offset: {x: 1, y: 1.5, z: -2}
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  lookSpeed: 0.1
+  followSpeed: 0.1
+  pivotSpeed: 0.03
+  minimumPivot: -35
+  maximumPivot: 35
+  cameraSphereRadius: 0.2
+  cameraCollisionOffset: 0.2
+  minimumCollisionOffset: 0.2
 --- !u!1 &2009619461
 GameObject:
   m_ObjectHideFlags: 0
