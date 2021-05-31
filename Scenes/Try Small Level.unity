@@ -3025,7 +3025,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1764c04793c6d49468f86879ab78cef1,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1764c04793c6d49468f86879ab78cef1,
         type: 3}
@@ -5909,6 +5909,26 @@ MonoBehaviour:
   cameraSphereRadius: 0.2
   cameraCollisionOffset: 0.2
   minimumCollisionOffset: 0.2
+--- !u!1 &1990883724 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1764c04793c6d49468f86879ab78cef1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1559836413}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1990883725
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990883724}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &2009619461
 GameObject:
   m_ObjectHideFlags: 0
@@ -6254,6 +6274,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: monster
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3ad3c8998cf48fc499bc3d2b160b5cfb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ad3c8998cf48fc499bc3d2b160b5cfb, type: 3}
