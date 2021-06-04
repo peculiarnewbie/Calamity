@@ -11,14 +11,12 @@ public class ModeChange : MonoBehaviour
 
     int mode = 0;
 
-    [SerializeField] RigPosition rigPosition;
-
     public int ChangeMode()
     {
         mode += 1;
         mode %=  howManyModes;
 
-        rigPosition.SwitchCameraMode(mode);
+        RigPosition.singleton.SwitchCameraMode(mode);
 
         return mode;
     }

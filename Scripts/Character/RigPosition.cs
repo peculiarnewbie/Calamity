@@ -51,7 +51,7 @@ public class RigPosition : MonoBehaviour
     private void Start()
     {
         XRCharacterController.current.OnFocus += FocusOnEnemy;
-
+        target = GameObject.FindGameObjectWithTag("Player").transform;
         SwitchCameraMode(0);
     }
 
