@@ -84,6 +84,7 @@ public class XRCharacterController : MonoBehaviour
         playerActions.Land.Jump.started += ctx => jumpTrigger = true;
         playerActions.Land.Reset.started += ctx => resetTrigger = true;
         playerActions.Land.Switch.started += ctx => switchTrigger = true;
+        playerActions.Land.Attack.started += ctx => animatorHandler.PlayAnimationTrigger("Attack");
         playerActions.Land.Focus.started += ctx => isFocusing = !isFocusing;
     }
 
@@ -277,7 +278,7 @@ public class XRCharacterController : MonoBehaviour
 
         if(isFocusing)
             OnFocus?.Invoke(focus.gameObject, true);
-
     }
+
 }
 
