@@ -113,6 +113,8 @@ GameObject:
   - component: {fileID: 1904009621571379877}
   - component: {fileID: 8538176428508443249}
   - component: {fileID: 632659417323474189}
+  - component: {fileID: 1520409178}
+  - component: {fileID: 1520409179}
   m_Layer: 0
   m_Name: Drone Enemy
   m_TagString: Untagged
@@ -200,6 +202,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6cd9deb93faa374f89425fca67672e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookRadius: 10
+--- !u!114 &1520409178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904009621571379876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851dbf7784b018545bc4c88a2686047e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1520409179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904009621571379876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30659426ef4686643a4f27613575977a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 3
 --- !u!1 &1904009622345935453
 GameObject:
   m_ObjectHideFlags: 0
