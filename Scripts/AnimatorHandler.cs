@@ -13,6 +13,11 @@ public class AnimatorHandler : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
     }
 
+    private void Start()
+    {
+        anim = GetComponentInChildren<Animator>();
+    }
+
     public void PlayTargetAnimation(string animParameter, bool value)
     {
         anim.SetBool(animParameter, value);

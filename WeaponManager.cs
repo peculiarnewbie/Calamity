@@ -19,11 +19,11 @@ public class WeaponManager : MonoBehaviour
 
     public void CloseRightDamageCollider()
     {
-        rightHandDamageCollider.EnableDamageCollider();
+        rightHandDamageCollider.DisableDamageCollider();
     }
 
     public void CloseLeftDamageCollider()
     {
-        leftHandDamageCollider.EnableDamageCollider();
+        leftHandDamageCollider.DisableDamageCollider();
     }
 }
