@@ -28,7 +28,7 @@ public class CharacterStats : MonoBehaviour
 
         currentHealth -= damage;
 
-        animatorHandler.PlayTargetAnimation("Damaged", true);
+        animatorHandler.PlayAnimationTrigger("Damage");
 
         if (currentHealth <= 0)
         {

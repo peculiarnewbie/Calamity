@@ -40,6 +40,7 @@ public class XRCharacterController : MonoBehaviour
     private bool switchTrigger = false;
     private int movementMode;
     private bool isSnapTurning = false; //true if the player snap turns
+    private PlayerStats playerStats;
 
     // Input Actions
     private PlayerActions playerActions;
@@ -74,6 +75,7 @@ public class XRCharacterController : MonoBehaviour
         modeChange = GetComponent<ModeChange>();
         animatorHandler = GetComponent<AnimatorHandler>();
         animatorHandler.Initialize();
+        playerStats = GetComponent<PlayerStats>();
     }
 
     private void OnEnable()
@@ -93,15 +95,22 @@ public class XRCharacterController : MonoBehaviour
 
     void Update()
     {
-        CheckForModeChange();
+        if (playerStats.ableToMove)
+        {
+            CheckForModeChange();
 
-        CheckForMovement();
+            CheckForMovement();
 
-        OrientMesh();
+            OrientMesh();
 
-        AnimateCharacter();
+            AnimateCharacter();
 
-        CheckForInteractions();
+            CheckForInteractions();
+        }
+        else
+        {
+            currentDirection = Vector3.zero;
+        }
     }
 
     private void FixedUpdate()
