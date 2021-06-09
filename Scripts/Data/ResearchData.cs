@@ -9,5 +9,6 @@ public class ResearchData : ScriptableObject
 
     public int numberOfPrefabsToCreate;
     public Vector3[] spawnPoints;
+    public int collectible;
 }
 
