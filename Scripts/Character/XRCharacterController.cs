@@ -36,6 +36,7 @@ public class XRCharacterController : MonoBehaviour
     private bool isFocusing = false;
     private bool canDoubleJump = true;
     private Vector3 verticalVelocity;
+    private Vector3 currentMovement;
     private bool resetTrigger = false;
     private bool switchTrigger = false;
     private int movementMode;
@@ -158,7 +159,6 @@ public class XRCharacterController : MonoBehaviour
                 OnSnapTurn?.Invoke(false);
                 isSnapTurning = true;
             }
-            Debug.Log(rotateInput);
         }
         else if(rotateInput > -0.3 && rotateInput < 0.3)
         {
@@ -216,7 +216,17 @@ public class XRCharacterController : MonoBehaviour
 
         //Movement
         Vector3 movement = currentDirection * playerSpeed * Time.deltaTime;
-        character.Move(movement);
+        float range = (movement - currentMovement).magnitude;
+        Debug.Log(movement);
+        Debug.Log(currentMovement);
+        Vector3 smoothMovement;
+        if (isGrounded)
+            smoothMovement = Vector3.Lerp(currentMovement, movement, 0.95f * Mathf.Pow(range, 0.5f));
+        else
+            smoothMovement = Vector3.Lerp(currentMovement, movement, 0.4f * Mathf.Pow(range, 0.8f));
+        character.Move(smoothMovement);
+        currentMovement = smoothMovement;
+            
 
         //Jump
         if (jumpTrigger)
