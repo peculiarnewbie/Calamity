@@ -31,7 +31,6 @@ public class XRCharacterController : MonoBehaviour
 
     // Values
     private Vector3 currentDirection = Vector3.zero;
-    private bool isGrounded;
     private bool jumpTrigger = false;
     private bool isFocusing = false;
     private bool canDoubleJump = true;
@@ -43,6 +42,16 @@ public class XRCharacterController : MonoBehaviour
     private bool isSnapTurning = false; //true if the player snap turns
     private PlayerStats playerStats;
 
+    // Ground & Air Detection
+    public bool isInAir;
+    private bool isGrounded;
+    [SerializeField] float groundDetectionRayStartPoint = 0.5f;
+    [SerializeField] float minimumDistanceToFall = 0.5f;
+    [SerializeField] float groundDirectionRayDistance = 0.2f;
+    LayerMask ignoreForGroundCheck;
+    public float inAirTimer;
+
+
     // Input Actions
     private PlayerActions playerActions;
 
@@ -52,13 +61,13 @@ public class XRCharacterController : MonoBehaviour
     public ActionBasedController controller = null;
     public GameManager gameManager;
     public ModeChange modeChange;
+    public Transform raySource;
 
     public Interactable focus;
 
     [Space(10)]
 
     // Components
-    private CharacterController character = null;
 
     //Events
     public UnityEvent snapTurnEventLeft;
@@ -72,11 +81,13 @@ public class XRCharacterController : MonoBehaviour
         current = this;
         // Collect components
         playerActions = new PlayerActions();
-        character = GetComponent<CharacterController>();
         modeChange = GetComponent<ModeChange>();
         animatorHandler = GetComponent<AnimatorHandler>();
         animatorHandler.Initialize();
         playerStats = GetComponent<PlayerStats>();
+
+        isGrounded = true;
+        ignoreForGroundCheck = LayerMask.GetMask("Default");
     }
 
     private void OnEnable()
@@ -120,19 +131,86 @@ public class XRCharacterController : MonoBehaviour
         MoveCharacter();
     }
 
-    //private void CheckForMovement()
-    //{
-    //    Vector2 joystickDirection = new Vector2(2f, 2f);
+    private void CheckGrounded()
+    {
+        if (isInAir)
+        {
+            inAirTimer += Time.deltaTime;
+        }
+    }
 
-    //    //CalculateDirection(joystickDirection);
+    private void HandleFalling()
+    {
+        isGrounded = false;
+        RaycastHit hit;
+        Vector3 origin = transform.position;
+        origin.y += groundDetectionRayStartPoint;
 
-    //    MoveCharacter();
+        if(Physics.Raycast(origin, transform.forward, out hit, 0.4f))
+        {
 
-    //    OrientMesh();
+        }
 
-    //    AnimateCharacter();
 
-    //}
+        Debug.DrawRay(origin, -Vector3.up * minimumDistanceToFall, Color.red, 0.1f, false);
+        if(Physics.Raycast(origin, -Vector3.up, out hit, minimumDistanceToFall, ignoreForGroundCheck))
+        {
+            Vector3 tp = hit.point;
+            isGrounded = true;
+
+            canDoubleJump = true;
+            animatorHandler.PlayTargetAnimation("Jump", false);
+            //animator.SetBool("Jump", false);
+
+            if (hit.distance < minimumDistanceToFall - 0.1f)
+            {
+                transform.Translate(Vector3.up*0.2f);
+                Debug.Log("tenggelam bro");
+                verticalVelocity.y = 0;
+            }
+            else if (verticalVelocity.y < 0)
+            {
+                Debug.Log("shouldn't bro");
+                verticalVelocity.y = 0;
+            }
+
+            if (isInAir)
+            {
+                if(inAirTimer > 0.5f)
+                {
+                    Debug.Log("in air for" + inAirTimer);
+                }
+                else
+                {
+                    
+                }
+
+                inAirTimer = 0;
+                isInAir = false;
+            }
+        }
+        else
+        {
+            if (isGrounded)
+                isGrounded = false;
+            if (!isInAir)
+            {
+                Debug.Log("is falling");
+                isInAir = true;
+            }
+            if (verticalVelocity.y < 0)
+                verticalVelocity.y += gravity * fallMultiplier * Time.deltaTime;
+            else
+                verticalVelocity.y += gravity * Time.deltaTime;
+        }
+        transform.Translate(verticalVelocity * Time.deltaTime);
+        //character.Move(verticalVelocity * Time.deltaTime);
+
+    }
+
+    private void HandleJump() { 
+    }
+
 
     private void CheckForModeChange()
     {
@@ -147,23 +225,7 @@ public class XRCharacterController : MonoBehaviour
     {
         float rotateInput = playerActions.Land.Look.ReadValue<float>();
 
-        if (!isSnapTurning)
-        {
-            if (rotateInput < -0.9)
-            {
-                OnSnapTurn?.Invoke(true);
-                isSnapTurning = true;
-            }
-            else if(rotateInput > 0.9)
-            {
-                OnSnapTurn?.Invoke(false);
-                isSnapTurning = true;
-            }
-        }
-        else if(rotateInput > -0.3 && rotateInput < 0.3)
-        {
-            isSnapTurning = false;
-        }
+        HandleSnapTurning(rotateInput);
 
         Vector2 movementInput = playerActions.Land.Move.ReadValue<Vector2>();
         Vector3 newDirection = new Vector3(movementInput.x, 0, movementInput.y);
@@ -188,43 +250,45 @@ public class XRCharacterController : MonoBehaviour
 
     }
 
-    //private void CalculateDirection(Vector2 joystickDirection)
-    //{
-    //    Vector3 newDirection = new Vector3(joystickDirection.x, 0, joystickDirection.y);
-
-    //    Vector3 headRotation = new Vector3(0, head.transform.eulerAngles.y, 0);
-
-    //    // Rotate our joystick direction using the rotation of the head
-    //    currentDirection = Quaternion.Euler(headRotation) * newDirection;
-    //}
 
     private void MoveCharacter()
     {
-        isGrounded = character.isGrounded;
+        //isGrounded = character.isGrounded;
 
         //Debug.Log(isGrounded);
 
         //GroundCheck
-        if (character.isGrounded && verticalVelocity.y < 0)
-        {
-            verticalVelocity.y = -0.1f;
-            canDoubleJump = true;
-            //animator.SetBool("Jump", false);
-            animatorHandler.PlayTargetAnimation("Jump", false);
-        }
+        //if (character.isGrounded && verticalVelocity.y < 0)
+        //{
+        //    verticalVelocity.y = -0.1f;
+        //    canDoubleJump = true;
+        //    //animator.SetBool("Jump", false);
+        //    animatorHandler.PlayTargetAnimation("Jump", false);
+        //}
         
 
         //Movement
         Vector3 movement = currentDirection * playerSpeed * Time.deltaTime;
         float range = (movement - currentMovement).magnitude;
-        Debug.Log(movement);
-        Debug.Log(currentMovement);
         Vector3 smoothMovement;
         if (isGrounded)
-            smoothMovement = Vector3.Lerp(currentMovement, movement, 0.95f * Mathf.Pow(range, 0.5f));
+        {
+            if (movement == Vector3.zero)
+                smoothMovement = Vector3.Lerp(currentMovement, movement, 0.95f * Mathf.Pow(range, 0.2f));
+            else
+                smoothMovement = Vector3.Lerp(currentMovement, movement, 0.95f * Mathf.Pow(range, 0.5f));
+        }
         else
             smoothMovement = Vector3.Lerp(currentMovement, movement, 0.4f * Mathf.Pow(range, 0.8f));
-        character.Move(smoothMovement);
+
+        Debug.DrawRay(raySource.position, smoothMovement.normalized, Color.red, 0.1f, false);
+        bool doTranslate = Physics.Raycast(raySource.position,smoothMovement, 1f, ignoreForGroundCheck);
+        if (!doTranslate)
+        {
+            transform.Translate(-smoothMovement);
+            Debug.Log("no obstruction sire");
+        }
+        //character.Move(smoothMovement);
         currentMovement = smoothMovement;
             
 
@@ -234,9 +298,7 @@ public class XRCharacterController : MonoBehaviour
             jumpTrigger = false;
             if (isGrounded)
             {
-                //Debug.Log(canDoubleJump);
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * -gravity);
-                //animator.SetBool("Jump", true);
                 animatorHandler.PlayTargetAnimation("Jump", true);
             }
                 
@@ -244,16 +306,10 @@ public class XRCharacterController : MonoBehaviour
             {
                 verticalVelocity.y = Mathf.Sqrt(jumpHeight * doubleJumpMultiplier * -gravity);
                 canDoubleJump = false;
-                //Debug.Log(canDoubleJump);
             }
         }
 
-        if(verticalVelocity.y < 0)
-            verticalVelocity.y += gravity * fallMultiplier * Time.deltaTime;
-        else
-            verticalVelocity.y += gravity * Time.deltaTime;
-        character.Move(verticalVelocity * Time.deltaTime);
-
+        HandleFalling();
 
     }
 
@@ -288,6 +344,27 @@ public class XRCharacterController : MonoBehaviour
 
         if(isFocusing)
             OnFocus?.Invoke(focus.gameObject, true);
+    }
+
+    private void HandleSnapTurning(float rotateInput)
+    {
+        if (!isSnapTurning)
+        {
+            if (rotateInput < -0.9)
+            {
+                OnSnapTurn?.Invoke(true);
+                isSnapTurning = true;
+            }
+            else if (rotateInput > 0.9)
+            {
+                OnSnapTurn?.Invoke(false);
+                isSnapTurning = true;
+            }
+        }
+        else if (rotateInput > -0.3 && rotateInput < 0.3)
+        {
+            isSnapTurning = false;
+        }
     }
 
 }

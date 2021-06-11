@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 58255300}
   - component: {fileID: 58255299}
   - component: {fileID: 58255304}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -440,6 +440,42 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &429206168 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6256441076586091779, guid: 55b31ae29c7de5040a47f715ac777b60,
+    type: 3}
+  m_PrefabInstance: {fileID: 1246902546}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &429206173
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429206168}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.6
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.2, z: 0}
+--- !u!54 &429206174
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429206168}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &430155350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1741,7 +1777,7 @@ PrefabInstance:
     - target: {fileID: 6256441076586091777, guid: 55b31ae29c7de5040a47f715ac777b60,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.244
       objectReference: {fileID: 0}
     - target: {fileID: 6256441076586091777, guid: 55b31ae29c7de5040a47f715ac777b60,
         type: 3}
@@ -1798,7 +1834,8 @@ PrefabInstance:
       propertyPath: rigPosition
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6256441076586091778, guid: 55b31ae29c7de5040a47f715ac777b60, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 55b31ae29c7de5040a47f715ac777b60, type: 3}
 --- !u!114 &1246902547 stripped
 MonoBehaviour:
@@ -1806,7 +1843,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1246902546}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 429206168}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8729370d0ca89de478c3cc9433a73ab8, type: 3}
