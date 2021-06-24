@@ -67,13 +67,7 @@ public class XRCharacterController : MonoBehaviour
 
     [Space(10)]
 
-    // Components
-
-    //Events
-    public UnityEvent snapTurnEventLeft;
-    public UnityEvent snapTurnEventRight;
     //public EnemyEvent focusOnEnemyEvent;
-
     public static XRCharacterController current;
 
     private void Awake()
@@ -87,7 +81,12 @@ public class XRCharacterController : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
 
         isGrounded = true;
-        ignoreForGroundCheck = LayerMask.GetMask("Default");
+        ignoreForGroundCheck = ~(1 << 0 | 1 << 12);
+    }
+
+    private void Start()
+    {
+        GameManager.instance.OnReset += ResetCharacter;
     }
 
     private void OnEnable()
@@ -108,7 +107,7 @@ public class XRCharacterController : MonoBehaviour
 
     void Update()
     {
-        if (playerStats.ableToMove)
+        if (playerStats.isAlive && playerStats.canMove)
         {
             CheckForModeChange();
 
@@ -253,20 +252,6 @@ public class XRCharacterController : MonoBehaviour
 
     private void MoveCharacter()
     {
-        //isGrounded = character.isGrounded;
-
-        //Debug.Log(isGrounded);
-
-        //GroundCheck
-        //if (character.isGrounded && verticalVelocity.y < 0)
-        //{
-        //    verticalVelocity.y = -0.1f;
-        //    canDoubleJump = true;
-        //    //animator.SetBool("Jump", false);
-        //    animatorHandler.PlayTargetAnimation("Jump", false);
-        //}
-        
-
         //Movement
         Vector3 movement = currentDirection * playerSpeed * Time.deltaTime;
         float range = (movement - currentMovement).magnitude;
@@ -281,8 +266,8 @@ public class XRCharacterController : MonoBehaviour
         else
             smoothMovement = Vector3.Lerp(currentMovement, movement, 0.4f * Mathf.Pow(range, 0.8f));
 
-        Debug.DrawRay(raySource.position, smoothMovement.normalized, Color.red, 0.1f, false);
-        bool doTranslate = Physics.Raycast(raySource.position,smoothMovement, 1f, ignoreForGroundCheck);
+        Debug.DrawRay(raySource.position, smoothMovement.normalized / 2, Color.red, 0.1f, false);
+        bool doTranslate = Physics.Raycast(raySource.position,smoothMovement, 0.5f, ignoreForGroundCheck);
         if (!doTranslate)
         {
             transform.Translate(-smoothMovement);
@@ -317,10 +302,10 @@ public class XRCharacterController : MonoBehaviour
     {
         // Set the direction the charactre should look, only with input
         if (currentDirection != Vector3.zero)
-            if (movementMode == 0)
-                mesh.transform.forward = currentDirection;
-            else if (movementMode == 1)
+            if (movementMode == 1)
                 mesh.transform.forward = head.transform.forward;
+            else
+                mesh.transform.forward = currentDirection;
     }
 
     private void AnimateCharacter()
@@ -365,6 +350,12 @@ public class XRCharacterController : MonoBehaviour
         {
             isSnapTurning = false;
         }
+    }
+
+    private void ResetCharacter()
+    {
+        verticalVelocity.y = 0;
+        transform.position = new Vector3(0, 2f, 0);
     }
 
 }
