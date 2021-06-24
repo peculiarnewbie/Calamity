@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class FadeToBlack : MonoBehaviour
 {
+    CanvasGroup canvasGroup;
+
     private void Start()
     {
+        GameManager.instance.OnResetStart += FadeMe;
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 1;
         FadeOn();
     }
 
@@ -21,20 +26,20 @@ public class FadeToBlack : MonoBehaviour
 
     IEnumerator DoFade()
     {
-        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
         while (canvasGroup.alpha < 1)
         {
             canvasGroup.alpha += Time.deltaTime;
             yield return null;
         }
         canvasGroup.interactable = false;
+        FadeOn();
         yield return null;
 
     }
 
     IEnumerator DoFadeOn()
     {
-        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+        yield return new WaitForSeconds(1f);
         while (canvasGroup.alpha > 0)
         {
             canvasGroup.alpha -= Time.deltaTime / 2;
