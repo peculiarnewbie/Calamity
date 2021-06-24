@@ -21,7 +21,7 @@ public class TriggerList : MonoBehaviour
             OnTimeCollect?.Invoke();
 
         else
-            GameManager.instance.LoadLevel(type);
+            GameManager.instance.LoadLevel((int)type);
 
         if (setInactive)
         {
