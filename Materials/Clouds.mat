@@ -46,6 +46,6 @@ Material:
     - Vector4_1138704E: {r: 0, g: 1, b: -1, a: 1}
     - Vector4_35D044E9: {r: 1, g: 0, b: 0, a: 90}
     - _NoiseRemap: {r: -0.27, g: 0.94, b: -1.06, a: 0.88}
-    - _PeakColor: {r: 0.5644357, g: 0.7615352, b: 0.7924528, a: 0}
+    - _PeakColor: {r: 0.454902, g: 0.5294118, b: 0.6313726, a: 0}
     - _ProjectionRotation: {r: 1, g: 0, b: 0, a: 90}
     - _ValleyColor: {r: 0.45616764, g: 0.5299354, b: 0.6320754, a: 0}
