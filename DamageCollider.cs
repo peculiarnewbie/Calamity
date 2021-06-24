@@ -6,6 +6,8 @@ public class DamageCollider : MonoBehaviour
 {
     Collider damageCollider;
 
+    public bool damagePlayer = true;
+    public bool damageEnemy = true;
     public int weaponDamage = 2;
 
     private void Awake()
@@ -28,7 +30,7 @@ public class DamageCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if(collision.tag == "Player")
+        if(damagePlayer && collision.tag == "Player")
         {
             PlayerStats playerStats = collision.GetComponent<PlayerStats>();
 
@@ -37,7 +39,7 @@ public class DamageCollider : MonoBehaviour
                 playerStats.TakeDamage(weaponDamage);
             }
         }
-        if (collision.tag == "Enemy")
+        if (damageEnemy && collision.tag == "Enemy")
         {
             EnemyStats enemyStats = collision.GetComponent<EnemyStats>();
 
