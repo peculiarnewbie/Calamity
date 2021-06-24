@@ -6,15 +6,18 @@ using System.IO;
 
 public class CSVGen : MonoBehaviour
 {
-    public void CreateCSV(string name)
+    public void CreateCSV(ResearchData data)
     {
-        StartCoroutine(GenerateCSV(name));
+        StartCoroutine(GenerateCSV2(data));
     }
 
-    IEnumerator GenerateCSV(string name)
+   
+    IEnumerator GenerateCSV2(ResearchData data)
     {
 
-        string filepath = Application.persistentDataPath + "/" + name + "-" + "GameOne-" + DateTime.Now.ToString("dd-MMMM-HHmmss") + ".csv";
+        string filepath = Application.persistentDataPath + "/" + data.name + "-" + "GameOne-" + DateTime.Now.ToString("dd-MMMM-HHmmss") + ".csv";
+
+
 
         if (File.Exists(filepath))
         {
@@ -22,6 +25,20 @@ public class CSVGen : MonoBehaviour
         }
 
         var sr = File.CreateText(filepath);
+
+        string dataCSV = "Player Name" + System.Environment.NewLine;
+        dataCSV += data.name + System.Environment.NewLine + System.Environment.NewLine;
+        dataCSV += "Collectibles collected" + System.Environment.NewLine;
+        dataCSV += data.numberOfCollectibles + System.Environment.NewLine + System.Environment.NewLine;
+        dataCSV += "Time to finish" + System.Environment.NewLine;
+        dataCSV += data.timeFinish + System.Environment.NewLine;
+
+        sr.WriteLine(dataCSV);
+
+        FileInfo fInfo = new FileInfo(filepath);
+        fInfo.IsReadOnly = true;
+
+        sr.Close();
 
         yield return new WaitForSeconds(0.5f);
 
