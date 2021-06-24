@@ -16,7 +16,7 @@ public class ModeChange : MonoBehaviour
         mode += 1;
         mode %=  howManyModes;
 
-        RigPosition.singleton.SwitchCameraMode(mode);
+        RigPosition.instance.SwitchCameraMode(mode);
 
         return mode;
     }

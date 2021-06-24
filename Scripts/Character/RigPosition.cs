@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RigPosition : MonoBehaviour
 {
+    public event Action<bool> OnCameraStatic;
+
     public Transform target;
     public Transform cameraPos;
 
@@ -16,6 +19,7 @@ public class RigPosition : MonoBehaviour
 
     public Vector3 platformer_Offset;
     public Vector3 battle_Offset;
+    public Vector3 static_Offset;
     Vector3 offset;
     Vector3 tempOffset;
 
@@ -23,7 +27,7 @@ public class RigPosition : MonoBehaviour
 
     public LayerMask ignoreLayers;
 
-    public static RigPosition singleton;
+    public static RigPosition instance;
 
     public float lookSpeed = 0.1f;
     public float followSpeed = 0.1f;
@@ -43,14 +47,14 @@ public class RigPosition : MonoBehaviour
 
     private void Awake()
     {
-        singleton = this;
+        instance = this;
         ignoreLayers = ~(1 << 8 | 1 << 9 | 1 << 10);
         defaultPosition = transform.localPosition.z;
     }
 
     private void Start()
     {
-        XRCharacterController.current.OnFocus += FocusOnEnemy;
+        offset = platformer_Offset;
         target = GameObject.FindGameObjectWithTag("Player").transform;
         SwitchCameraMode(0);
     }
@@ -92,7 +96,7 @@ public class RigPosition : MonoBehaviour
         
         if (cameraTurnActive)
         {
-            transform.localPosition =  offset;
+            transform.localPosition = offset;
         }
         else
         {
@@ -110,17 +114,17 @@ public class RigPosition : MonoBehaviour
         switch (mode)
         {
             case 0:
-
                 coroutine = SmoothSwitch(platformer_Offset);
                 smoothSpeed = platformerSmooth;
+                OnCameraStatic?.Invoke(false);
                 break;
             case 1:
-
                 coroutine = SmoothSwitch(battle_Offset);
                 smoothSpeed = battleSmooth;
                 break;
             case 2:
-                coroutine = SmoothSwitch(new Vector3(0, 0, 0));
+                coroutine = SmoothSwitch(static_Offset);
+                OnCameraStatic?.Invoke(true);
                 break;
             default:
                 break;
@@ -141,17 +145,7 @@ public class RigPosition : MonoBehaviour
         yield return null;
     }
 
-    public void FocusOnEnemy(GameObject focus, bool isEnemy)
-    {
-        if (!isEnemy)
-            return;
-
-        Vector3 lookPos = focus.transform.position - transform.position;
-        Quaternion rotation = Quaternion.LookRotation(lookPos, new Vector3(0,1,0));
-        transform.rotation = rotation;
-        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * focusDamping);
-        //transform.LookAt(focus.transform, Vector3.up);
-    }
+    
 
     private void OnDrawGizmosSelected()
     {
