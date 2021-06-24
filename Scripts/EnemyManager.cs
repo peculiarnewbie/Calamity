@@ -7,11 +7,10 @@ using UnityEngine.Events;
 
 public class EnemyManager : MonoBehaviour
 {
-    UnityEvent enemyDeathEvent;
-    private int enemyHealth;
     private AnimatorHandler enemyAnimator;
-    private IEnumerator enemyDeathCoroutine;
+    private EnemyStats enemyStats;
     private bool isDamaged;
+    private bool onWalkPoint = false;
 
     public LayerMask whatIsGround, whatIsPlayer;
 
@@ -20,7 +19,7 @@ public class EnemyManager : MonoBehaviour
 
     //walk point
     public Vector3 walkPoint;
-    bool walkPointSet;
+    public bool walkPointSet;
     public float walkPointRange;
 
     //Attacking
@@ -38,22 +37,13 @@ public class EnemyManager : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         enemyAnimator = GetComponent<AnimatorHandler>();
         enemyAnimator.Initialize();
+        enemyStats = GetComponent<EnemyStats>();
     }
 
     private void Update()
     {
-        float distance = Vector3.Distance(target.position, transform.position);
-
-        if(distance <= sightRange)
-        {
-            agent.SetDestination(target.position);
-
-            if(distance <= agent.stoppingDistance)
-            {
-                
-                FaceTarget();
-            }
-        }
+        if (!enemyStats.isAlive)
+            return;
 
         //Check for sight and attack range
         targetInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
@@ -79,9 +69,13 @@ public class EnemyManager : MonoBehaviour
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
+        if (distanceToWalkPoint.magnitude < 1f && !onWalkPoint)
+        {
+            Invoke("ResetWalkPoint", 2.0f);
+            onWalkPoint = true;
+        }
 
+        enemyAnimator.PlayTargetAnimation("Moving", true);
     }
 
     private void SearchWalkPoint()
@@ -91,18 +85,25 @@ public class EnemyManager : MonoBehaviour
 
         walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
+        
         if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
+        {
             walkPointSet = true;
+            Debug.DrawRay(walkPoint, -transform.up * 2f, Color.red, 0.5f, false);
+        }
     }
 
     private void ChasePlayer()
     {
+        FaceTarget();
         agent.SetDestination(target.position);
+        enemyAnimator.PlayTargetAnimation("Moving",true);
     }
 
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
+        enemyAnimator.PlayTargetAnimation("Moving", false);
         FaceTarget();
 
         if (!alreadyAttacked)
@@ -121,6 +122,12 @@ public class EnemyManager : MonoBehaviour
         alreadyAttacked = false;
     }
 
+    private void ResetWalkPoint()
+    {
+        walkPointSet = false;
+        onWalkPoint = false;
+    }
+
     void FaceTarget()
     {
         Vector3 direction = (target.position - transform.position).normalized;
@@ -128,35 +135,9 @@ public class EnemyManager : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
-    private void EnemyDamaged()
-    {
-        if (!isDamaged)
-        {
-            enemyHealth--;
-            if (enemyHealth <= 0)
-            {
-                EnemyDeath();
-            }
-            else
-            {
-                enemyAnimator.PlayAnimationTrigger("Damaged");
-            }
-        }
-        
-    }
-
-    private void EnemyDeath()
-    {
-        StartCoroutine(enemyDeathCoroutine);
-        enemyDeathEvent.Invoke();
-    }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, sightRange);
     }
-
-
-
 }

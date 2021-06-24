@@ -11,7 +11,7 @@ public class CharacterStats : MonoBehaviour
     public Stat damage;
     public Stat armor;
 
-    public bool ableToMove = true;
+    public bool isAlive = true;
 
     public AnimatorHandler animatorHandler;
 
@@ -21,7 +21,7 @@ public class CharacterStats : MonoBehaviour
         animatorHandler = GetComponent<AnimatorHandler>();
     }
 
-    public void TakeDamage(int damage)
+    public void DoDamage(int damage)
     {
         damage -= armor.GetValue();
         damage = Mathf.Clamp(damage, 0, int.MaxValue);
@@ -36,10 +36,15 @@ public class CharacterStats : MonoBehaviour
         }
     }
 
+    public virtual void TakeDamage(int damage)
+    {
+        DoDamage(damage);
+    }
+
     public virtual void Die()
     {
         Debug.Log(transform.name + "died.");
-        ableToMove = false;
+        isAlive = false;
         animatorHandler.PlayTargetAnimation("Death", true);
     }
 }
